@@ -12,10 +12,8 @@
      * and render to the UI each second
      */
     let startCountDown = function() {
-            // If timer does not exist, break out the function
-            if (!data.timer) return;
 
-            // Otherwise, render the inital start of the timer 
+            // Render the inital start of the timer 
             render();
             // Start counting down
             let countDown = window.setInterval(function () {
@@ -35,19 +33,23 @@
      */
     let template = function () {
         return '<h1>Countdown Timer</h1>' +
-               '<p> :' + data.timer + '</p>';
+               '<p>' + ':' + data.timer + '</p>';
     };
     /**
      * This function renders the template to the DOM
      */
     let render = function () {
+        // If no changes to the UI have been made, break out of the function
+        if (app.innerHTML === template()) return;
+
+        // Otherwise, render the template to the DOM
         app.innerHTML = template();
     }
     /**
      * This function renders a button to the DOM
      */
     let showButton = function() {
-        app.innerHTML += '<button>Reset</button>';
+        app.innerHTML += '<button>Restart Timer</button>';
     }
     /**
      * This function restarts the timer upon a click event
@@ -55,9 +57,9 @@
     let handleClick = function(e) {
         // Check if the targeted element is the Reset button
         if (!e.target.matches('button')) return;
-            
-            console.log('I am the button!');
+            // Set the timer property back to the intial start time
             data.timer = start;
+            // Start the countdown
             startCountDown();
             
     }
