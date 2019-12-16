@@ -1,6 +1,7 @@
 ;(function() {
     let app = document.querySelector('#app');
-    let start = 60;
+    let start = 120;
+    let seconds = 60;
 
     // Create the data object with the start time
     let data = {
@@ -29,11 +30,27 @@
         }, 1000);
     }
     /**
+     * This function converts the timer into M:SS format
+     */
+    let formatTime = function (time) {
+
+        let M = Math.floor(time / 60);
+        let SS = time % 60;
+        // If only one digit is displayed for seconds,
+        // append a 0 to the beginning of the seconds string
+        if (SS.toString().length === 1) {
+            SS = SS.toString().padStart(2, '0');
+        };
+        
+        return M + ':' + SS;
+        
+    }
+    /**
      * This function sets up the UI template that will render to the DOM
      */
     let template = function () {
         return '<h1>Countdown Timer</h1>' +
-               '<p>' + ':' + data.timer + '</p>';
+               '<p>' + formatTime(data.timer) + '</p>';
     };
     /**
      * This function renders the template to the DOM
