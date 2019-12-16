@@ -34,15 +34,12 @@
      */
     let formatTime = function (time) {
 
+        // Get the minutes and seconds
         let M = Math.floor(time / 60);
         let SS = time % 60;
-        // If only one digit is displayed for seconds,
-        // append a 0 to the beginning of the seconds string
-        if (SS.toString().length === 1) {
-            SS = SS.toString().padStart(2, '0');
-        };
-        
-        return M + ':' + SS;
+        // Appends a 0 to the beginning of the seconds string
+        // if only one digit is displayed for seconds
+        return M + ':' + SS.toString().padStart(2, '0');
         
     }
     /**
