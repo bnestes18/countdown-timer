@@ -6,27 +6,63 @@
 
     // Create the data object with the start time
     let data = {
-        timer: start
+        timer: start,
+        done: false,
+        paused: true
     };
 
-    let countDown = window.setInterval(function () {
-            
-        // Decrease the timer by 1
-        data.timer--;
-        render();
-    
-        if (data.timer === 0) {
-            window.clearInterval(countDown);
-            showResetButton();
-        }
-    }, 1000);
-    
-    
-
-
     // FUNCTIONS
-    let pauseCountDown = function () {
+
+     /**
+     * This function runs the count down of the timer
+     */
+    let startCountDown = function () {
+        data.paused = false;
+        countDown = window.setInterval(function () {
+            
+            // Get the new timer value
+            let time = data.timer - 1;
+
+            // If the timer hits 0, set as done
+            let done = time === 0 ? true : false
+
+            // Update data
+            data.timer = time;
+            data.done = done;
+
+            // Render new UI
+            render();
+
+            // If the timer is done, stop it from running
+            if (done) {
+                stopCountDown();
+            }
+
+        }, 1000);
+    }
+    /**
+     * This function stops the count down of the timer
+     */
+    let stopCountDown = function() {
+        data.paused = true;
         window.clearInterval(countDown);
+    }
+    /**
+     * This function starts the timer
+     */
+    let startTimer = function () {
+        // ...Set the timer property back to the intial start time and done property to false
+        data.timer = start;
+        data.done = false;
+
+        // Clear any existing timers
+        stopCountDown();
+
+        // Update the timer every second
+        startCountDown();
+
+        // Run an initial render
+        render();
     }
     /**
      * This function converts the timer into M:SS format
@@ -45,10 +81,12 @@
      * This function sets up the UI template that will render to the DOM
      */
     let template = function () {
-        return '<h1>Countdown Timer</h1>' +
+        let html =  '<h1>Countdown Timer</h1>' +
                '<p>' + formatTime(data.timer) + '</p>' +
-               '<button id="start">Start</button>' +
-               '<button id="pause">Pause</button>';
+               (data.paused ? '<button id="start">Start</button>' : '<button id="pause">Pause</button>') + 
+               '<button id="reset">Restart Timer</button>';
+                
+        return html;  
 
     };
     /**
@@ -62,57 +100,28 @@
         app.innerHTML = template();
     }
     /**
-     * This function renders a button to the DOM
-     */
-    let showResetButton = function() {
-        app.innerHTML += '<button id="reset">Restart Timer</button>';
-    }
-    /**
      * This function restarts the timer upon a click event
      */
     let handleClick = function(e) {
         // If the targeted element is the Reset button...
         if (e.target.matches('#reset')) {
-            console.log('I am the reset button')
-            // ...Set the timer property back to the intial start time
-            data.timer = start;
-            // Start the countdown
-            render();
-            let countDown = window.setInterval(function () {
-            
-        // Decrease the timer by 1
-        data.timer--;
-        render();
-    
-        if (data.timer === 0) {
-            window.clearInterval(countDown);
-            showResetButton();
-        }
-    }, 1000);
-
+            // Start the timer
+            startTimer();
         }   
-
+        // If the targeted element is the Start button...
         if (e.target.matches('#start')) {
-            console.log('I am the start button');
-            
-            let resumeCountDown = window.setInterval(function() {
-                    data.timer--;
-                    render();
-
-                    if (data.timer === 0) {
-                        window.clearInterval(resumeCountDown);
-                        showResetButton();
-                    }
-            }, 1000);
+            // Start counting down
+            startCountDown();
+            render();
             
         }
-
+        // If the targeted element is the Pause button...
         if (e.target.matches('#pause')) {
-            console.log('I am the pause button');
-            pauseCountDown();
+            // Stop the count down from running
+            stopCountDown();
+            render();
             
-        }
-            
+        }      
            
     }
 
@@ -121,8 +130,5 @@
 
     // Listens for 'click' event on Reset button in the DOM
     document.addEventListener('click', handleClick, false);
-
-    
-
 
 })();
