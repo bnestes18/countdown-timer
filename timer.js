@@ -1,33 +1,32 @@
 ;(function() {
+
+    // GLOBAL VARIABLES
     let app = document.querySelector('#app');
     let start = 120;
-    let seconds = 60;
 
     // Create the data object with the start time
     let data = {
         timer: start
     };
 
-    /**
-     * This function counts down the timer from 60 to 0 seconds 
-     * and render to the UI each second
-     */
-    let startCountDown = function() {
-
-            // Render the inital start of the timer 
-            render();
-            // Start counting down
-            let countDown = window.setInterval(function () {
+    let countDown = window.setInterval(function () {
             
-            // Decrease the timer by 1
-            data.timer--;
-            render();
+        // Decrease the timer by 1
+        data.timer--;
+        render();
+    
+        if (data.timer === 0) {
+            window.clearInterval(countDown);
+            showResetButton();
+        }
+    }, 1000);
+    
+    
 
-            if (data.timer === 0) {
-                window.clearInterval(countDown);
-                showButton();
-            }
-        }, 1000);
+
+    // FUNCTIONS
+    let pauseCountDown = function () {
+        window.clearInterval(countDown);
     }
     /**
      * This function converts the timer into M:SS format
@@ -47,7 +46,10 @@
      */
     let template = function () {
         return '<h1>Countdown Timer</h1>' +
-               '<p>' + formatTime(data.timer) + '</p>';
+               '<p>' + formatTime(data.timer) + '</p>' +
+               '<button id="start">Start</button>' +
+               '<button id="pause">Pause</button>';
+
     };
     /**
      * This function renders the template to the DOM
@@ -62,27 +64,65 @@
     /**
      * This function renders a button to the DOM
      */
-    let showButton = function() {
-        app.innerHTML += '<button>Restart Timer</button>';
+    let showResetButton = function() {
+        app.innerHTML += '<button id="reset">Restart Timer</button>';
     }
     /**
      * This function restarts the timer upon a click event
      */
     let handleClick = function(e) {
-        // Check if the targeted element is the Reset button
-        if (!e.target.matches('button')) return;
-            // Set the timer property back to the intial start time
+        // If the targeted element is the Reset button...
+        if (e.target.matches('#reset')) {
+            console.log('I am the reset button')
+            // ...Set the timer property back to the intial start time
             data.timer = start;
             // Start the countdown
-            startCountDown();
+            render();
+            let countDown = window.setInterval(function () {
             
+        // Decrease the timer by 1
+        data.timer--;
+        render();
+    
+        if (data.timer === 0) {
+            window.clearInterval(countDown);
+            showResetButton();
+        }
+    }, 1000);
+
+        }   
+
+        if (e.target.matches('#start')) {
+            console.log('I am the start button');
+            
+            let resumeCountDown = window.setInterval(function() {
+                    data.timer--;
+                    render();
+
+                    if (data.timer === 0) {
+                        window.clearInterval(resumeCountDown);
+                        showResetButton();
+                    }
+            }, 1000);
+            
+        }
+
+        if (e.target.matches('#pause')) {
+            console.log('I am the pause button');
+            pauseCountDown();
+            
+        }
+            
+           
     }
 
     // Start the timer on initial load
-    startCountDown();
+    render();
 
-    // Listens for 'click' event in the DOM
-    document.addEventListener('click', handleClick, false)
+    // Listens for 'click' event on Reset button in the DOM
+    document.addEventListener('click', handleClick, false);
+
+    
 
 
 })();
