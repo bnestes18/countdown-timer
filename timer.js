@@ -120,7 +120,6 @@
         for (let key in obj) {
             if (obj.hasOwnProperty(key)) {
                 data[key] = obj[key];
-                console.log(data)
             }
         }
         // Render a new UI
