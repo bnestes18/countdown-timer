@@ -1,4 +1,5 @@
-;(function() {
+;
+(function () {
 
     // GLOBAL VARIABLES
     let app = document.querySelector('#app');
@@ -18,12 +19,12 @@
      * This function sets up the UI template that will render to the DOM
      */
     let template = function () {
-        let html =  '<h1>Countdown Timer</h1>' +
-               '<p>' + formatTime(data.timer) + '</p>' +
-               (data.paused ? '<button id="start">Start</button>' : '<button id="pause">Pause</button>') + 
-               '<button id="reset">Restart Timer</button>';
-                
-        return html;  
+        let html = '<h1>Countdown Timer</h1>' +
+            '<p>' + formatTime(data.timer) + '</p>' +
+            (data.paused ? '<button id="start">Start</button>' : '<button id="pause">Pause</button>') +
+            '<button id="reset">Restart Timer</button>';
+
+        return html;
 
     };
     /**
@@ -36,27 +37,27 @@
         // Otherwise, render the template to the DOM
         app.innerHTML = template();
     }
-     /**
+    /**
      * This function runs the count down of the timer
      */
     let startCountDown = function () {
-        // data.paused = false;
-        setData({paused: false});
+
+        setData({
+            paused: false
+        });
         countDown = window.setInterval(function () {
-            
+
             // Get the new timer value
             let time = data.timer - 1;
 
             // If the timer hits 0, set as done
             let done = time === 0 ? true : false
 
-            // Update data
-            setData({timer: time, done: done});
-            // data.timer = time;
-            // data.done = done;
-
-            // Render new UI
-            // render();
+            // Update data and render a fresh UI
+            setData({
+                timer: time,
+                done: done
+            });
 
             // If the timer is done, stop it from running
             if (done) {
@@ -68,19 +69,16 @@
     /**
      * This function stops the count down of the timer
      */
-    let stopCountDown = function() {
-        // data.paused = true;
-        setData({paused: true});
+    let stopCountDown = function () {
+        setData({
+            paused: true
+        });
         window.clearInterval(countDown);
     }
     /**
      * This function starts the timer
      */
     let startTimer = function () {
-        // ...Set the timer property back to the intial start time and done property to false
-        setData({timer: start, done: false});
-        // data.timer = start;
-        // data.done = false;
 
         // Clear any existing timers
         stopCountDown();
@@ -88,8 +86,11 @@
         // Update the timer every second
         startCountDown();
 
-        // Run an initial render
-        // render();
+        // Set the timer property back to the intial start time and done property to false and run an initial render
+        setData({
+            timer: start,
+            done: false
+        });
     }
     /**
      * This function converts the timer into M:SS format
@@ -102,7 +103,6 @@
         // Appends a 0 to the beginning of the seconds string
         // if only one digit is displayed for seconds
         return M + ':' + SS.toString().padStart(2, '0');
-        
     }
     /*
      * This function creates an immutable copy of the data
@@ -111,8 +111,10 @@
     let getData = function () {
         return JSON.parse(JSON.stringify(data))
     }
-
-
+    /*
+     * Reactively update the data object
+     * @param {Object} obj The updated data
+     */
     let setData = function (obj) {
         // Update the data object
         for (let key in obj) {
@@ -127,27 +129,23 @@
     /**
      * This function restarts the timer upon a click event
      */
-    let handleClick = function(e) {
+    let handleClick = function (e) {
         // If the targeted element is the Reset button...
         if (e.target.matches('#reset')) {
             // Start the timer
             startTimer();
-        }   
+        }
         // If the targeted element is the Start button...
         if (e.target.matches('#start')) {
             // Start counting down
             startCountDown();
-            // render();
-            
         }
         // If the targeted element is the Pause button...
         if (e.target.matches('#pause')) {
             // Stop the count down from running
             stopCountDown();
-            // render();
-            
-        }      
-           
+        }
+
     }
 
     // Start the timer on initial load
